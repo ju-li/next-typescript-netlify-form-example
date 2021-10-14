@@ -14,7 +14,6 @@ const Form = () => {
         .join("&");
   };
 
-  const [state, setState] = useState<FormPost>();
   const [submitted, setSubmitted] = useState(false);
 
   // Source: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
