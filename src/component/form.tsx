@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import { useForm, SubmitHandler } from "react-hook-form";
 
 interface FormPost {
   firstname?: string
@@ -16,49 +17,50 @@ const Form = () => {
   const [state, setState] = useState<FormPost>();
   const [submitted, setSubmitted] = useState(false);
 
-  const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
+  // Source: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
+  const emailRegex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 
+  const { register, handleSubmit, formState: { errors } } = useForm<FormPost>();
+  const onSubmit: SubmitHandler<FormPost> = (data) => {
     fetch("/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: encode({ "form-name": "contact", ...state })
+      body: encode({ "form-name": "contact", ...data })
     })
       .then(() => console.log("Success!"))
       .catch(error => console.log(error));
 
-    event.preventDefault();
     setSubmitted(true);
-  }
-
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [e.currentTarget.id]: e.currentTarget.value,
-    });
+    console.log(data)
   };
 
   return (
      <div>
-        { (!submitted) && <form name="contact" method="POST" data-netlify="true" onSubmit={registerUser}>
+        { (!submitted) && <form name="contact" method="POST" data-netlify="true" onSubmit={handleSubmit(onSubmit)}>
         <input type="hidden" name="form-name" value="contact" />
-        <div className="flex gap-4 mb-2">
-          <div className="relative">
-          <input type="text" id="firstname" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" name="firstname" placeholder="First Name"
-          onChange={handleChange} />
+        <div>
+          <div>
+          <input type="text" id="firstname" placeholder="First Name"
+          {...register("firstname")} />
           </div>
-          <div className="relative">
-          <input type="text" id="lastname" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" name="lastname" placeholder="Last Name"
-          onChange={handleChange} />
+          <div>
+          <input type="text" id="lastname" placeholder="Last Name"
+          {...register("lastname")} />
           </div>
         </div>
-        <div className="flex flex-col mb-2">
-          <div className=" relative ">
-              <input type="text" name="email" id="email" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" placeholder="Email"
-              onChange={handleChange} />
-            </div>
+        <div>
+            <input type="text" id="email" placeholder="Email"
+              {...register("email", { required: true, pattern: emailRegex })} />
+              {
+                errors.email?.type === 'required' 
+                ? <p>Email is required</p> 
+                : errors.email?.type === 'pattern'
+                ? <p>Invalid email</p> 
+                : <></>
+              }
         </div>
-        <div className="flex w-full my-4">
-          <button type="submit" className="py-2 px-4  bg-jama-accent1 hover:bg-jama-accent2 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+        <div >
+          <button type="submit">
               Get Access
           </button>
         </div>
