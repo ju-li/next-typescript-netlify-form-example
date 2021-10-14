@@ -1,9 +1,46 @@
 import type { NextPage } from 'next'
+import {useState} from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
+interface IPost {
+  firstname?: string
+  lastname?: string
+  email?: string
+}
+
 const Home: NextPage = () => {
+  const encode = (data: any) => {
+    return Object.keys(data)
+        .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+        .join("&");
+  };
+
+  const [state, setState] = useState<IPost>();
+  const [submitted, setSubmitted] = useState(false);
+
+  const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
+
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: encode({ "form-name": "contact", ...state })
+    })
+      .then(() => console.log("Success!"))
+      .catch(error => console.log(error));
+
+    event.preventDefault();
+    setSubmitted(true);
+  }
+
+  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setState({
+      ...state,
+      [e.currentTarget.id]: e.currentTarget.value,
+    });
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -17,40 +54,36 @@ const Home: NextPage = () => {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <div>
+            { (!submitted) && <form name="contact" method="POST" data-netlify="true" onSubmit={registerUser}>
+            <input type="hidden" name="form-name" value="contact" />
+            <div className="flex gap-4 mb-2">
+              <div className="relative">
+              <input type="text" id="firstname" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" name="firstname" placeholder="First Name"
+              onChange={handleChange} />
+              </div>
+              <div className="relative">
+              <input type="text" id="lastname" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" name="lastname" placeholder="Last Name"
+              onChange={handleChange} />
+              </div>
+            </div>
+            <div className="flex flex-col mb-2">
+              <div className=" relative ">
+                  <input type="text" name="email" id="email" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" placeholder="Email"
+                  onChange={handleChange} />
+                </div>
+            </div>
+            <div className="flex w-full my-4">
+              <button type="submit" className="py-2 px-4  bg-jama-accent1 hover:bg-jama-accent2 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+                  Get Access
+              </button>
+            </div>
+          </form>}
+          { submitted && 
+            <h5>Thanks for submitting! We&apos;ll reach out ASAP!</h5>
+          }
         </div>
+        
       </main>
 
       <footer className={styles.footer}>
