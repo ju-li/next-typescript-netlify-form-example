@@ -16,7 +16,7 @@ const Form = () => {
   const [state, setState] = useState<FormPost>();
   const [submitted, setSubmitted] = useState(false);
 
-  const registerUser = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
     fetch("/", {
       method: "POST",
@@ -39,26 +39,24 @@ const Form = () => {
 
   return (
      <div>
-        { (!submitted) && <form name="contact" method="POST" data-netlify="true" onSubmit={registerUser}>
+        { (!submitted) && <form name="contact" method="POST" data-netlify="true" onSubmit={onSubmit}>
         <input type="hidden" name="form-name" value="contact" />
-        <div className="flex gap-4 mb-2">
-          <div className="relative">
-          <input type="text" id="firstname" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" name="firstname" placeholder="First Name"
+        <div>
+          <div>
+          <input type="text" id="firstname" name="firstname" placeholder="First Name"
           onChange={handleChange} />
           </div>
-          <div className="relative">
-          <input type="text" id="lastname" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" name="lastname" placeholder="Last Name"
+          <div>
+          <input type="text" id="lastname" name="lastname" placeholder="Last Name"
           onChange={handleChange} />
           </div>
         </div>
-        <div className="flex flex-col mb-2">
-          <div className=" relative ">
-              <input type="text" name="email" id="email" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-jama-accent2 focus:border-transparent" placeholder="Email"
-              onChange={handleChange} />
-            </div>
+        <div>
+            <input type="text" name="email" id="email" placeholder="Email"
+            onChange={handleChange} />
         </div>
-        <div className="flex w-full my-4">
-          <button type="submit" className="py-2 px-4  bg-jama-accent1 hover:bg-jama-accent2 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+        <div>
+          <button type="submit">
               Get Access
           </button>
         </div>
