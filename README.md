@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This is a Next.js Typescript demo project for my Medium article ["Next.js Typescript Netlify Forms — The no-redirect version"](https://jama-ai.medium.com/next-js-typescript-netlify-forms-the-no-redirect-version-d9bf859502cd)
 
 ## Getting Started
 
